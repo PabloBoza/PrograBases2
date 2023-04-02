@@ -39,6 +39,7 @@ CREATE TABLE [dbo].[EventLog](
  [id] [int] IDENTITY(1,1) NOT NULL,
  [logDescription] [varchar](2000) NOT NULL,
  [postIdUser] [varchar] (256) NOT NULL,
+ [postUserIP] [varchar] (256) NOT NULL,
  [postTime] [datetime] NOT NULL,
 
 CONSTRAINT [PK_EventLog] PRIMARY KEY CLUSTERED (

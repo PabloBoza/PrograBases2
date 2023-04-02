@@ -1,17 +1,13 @@
 USE TareaProgramada1
 GO
-
-CREATE PROCEDURE [dbo].[CargarXML]
-	
-	@inXML nvarchar (1000)
-	
-	AS
-	BEGIN
-
+BEGIN
+		DECLARE @inXML nvarchar (1000)
+		SET @inXML = 'D:\S3\archivosbd\DatosXML_ejemplo.xml'
 		DECLARE @Datos xml
-		DECLARE @Instruccion nvarchar(500) = 'SELECT @Datos = D FROM OPENROWSET (BULK '  + char(39) + @inXML + char(39) + ', SINGLE_BLOB) AS Datos(D)'
+		DECLARE @Instruccion nvarchar(500) = 'SELECT @Datos = D FROM OPENROWSET (BULK '+ CHAR(39) + @inXML + CHAR(39) + ', SINGLE_BLOB) AS Datos(D)'
 		DECLARE @Parametros nvarchar(500) 
 		SET @Parametros = N'@Datos xml OUTPUT'
+		EXECUTE sp_executesql @Instruccion, @Parametros, @Datos OUTPUT
 		DECLARE @hdoc int
 		EXEC sp_xml_preparedocument @hdoc OUTPUT, @Datos
 
@@ -21,13 +17,15 @@ CREATE PROCEDURE [dbo].[CargarXML]
 			ClaseArticulo [varchar] (128),
 			Precio [money]
 		);									/*Se crea una tabla temporal que almacena los datos para luego hacer un inner join con la tabla verdadera*/
+	
 
+		
 		INSERT INTO [dbo].[Usuario](
 			[Nombre],
 			[Clave]
 		)
 		SELECT *
-		FROM OPENXML (@hdoc, '/Root/Usuarios/Usuario' , 1)	/*Lee los contenidos del XML y para eso necesita un identificador,el 
+		FROM OPENXML (@hdoc, '/root/Usuarios/Usuario' , 1)	/*Lee los contenidos del XML y para eso necesita un identificador,el 
 															PATH del nodo y el 1 que sirve para retornar solo atributos*/
 		WITH(												/*Dentro del WITH se pone el nombre y el tipo de los atributos a retornar*/
 			Nombre nvarchar (30),
@@ -42,8 +40,6 @@ CREATE PROCEDURE [dbo].[CargarXML]
 			Nombre nvarchar(50)
 		)
 
-
-
 		INSERT INTO @ArticuloTemp(
 			   [Nombre],
 			   [ClaseArticulo],
@@ -53,10 +49,15 @@ CREATE PROCEDURE [dbo].[CargarXML]
 		WITH(
 			Nombre nvarchar(50),
 			ClasesdeArticulo nvarchar(50),
-			Precio money
+			precio money
 		)													/* Se inserta primero en una tabla temporal para asi luego poder insertar en una tabla permanente y realizar el mapeo*/
 
-		INSERT INTO [dbo].[Articulo]([Nombre],[idClaseArticulo],[Precio])
+		SELECT * FROM @ArticuloTemp
+
+		INSERT INTO [dbo].[Articulo](
+		[Nombre],
+		[idClaseArticulo],
+		[Precio])
 		SELECT
 			A.Nombre,
 			CA.id as idClaseArticulo,
@@ -66,5 +67,4 @@ CREATE PROCEDURE [dbo].[CargarXML]
 
 
 		DELETE FROM @ArticuloTemp
-
-	END
+END
