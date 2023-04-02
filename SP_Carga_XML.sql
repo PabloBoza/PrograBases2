@@ -1,0 +1,70 @@
+USE TareaProgramada1
+GO
+
+CREATE PROCEDURE [dbo].[CargarXML]
+	
+	@inXML nvarchar (1000)
+	
+	AS
+	BEGIN
+
+		DECLARE @Datos xml
+		DECLARE @Instruccion nvarchar(500) = 'SELECT @Datos = D FROM OPENROWSET (BULK '  + char(39) + @inXML + char(39) + ', SINGLE_BLOB) AS Datos(D)'
+		DECLARE @Parametros nvarchar(500) 
+		SET @Parametros = N'@Datos xml OUTPUT'
+		DECLARE @hdoc int
+		EXEC sp_xml_preparedocument @hdoc OUTPUT, @Datos
+
+		DECLARE @ArticuloTemp TABLE (
+			sec [int] IDENTITY(1,1),
+			Nombre [varchar] (128),
+			ClaseArticulo [varchar] (128),
+			Precio [money]
+		);									/*Se crea una tabla temporal que almacena los datos para luego hacer un inner join con la tabla verdadera*/
+
+		INSERT INTO [dbo].[Usuario](
+			[Nombre],
+			[Clave]
+		)
+		SELECT *
+		FROM OPENXML (@hdoc, '/Root/Usuarios/Usuario' , 1)	/*Lee los contenidos del XML y para eso necesita un identificador,el 
+															PATH del nodo y el 1 que sirve para retornar solo atributos*/
+		WITH(												/*Dentro del WITH se pone el nombre y el tipo de los atributos a retornar*/
+			Nombre nvarchar (30),
+			Password nvarchar (30)
+		)
+
+		INSERT INTO [dbo].[ClaseArticulo](
+			   [Nombre])
+		SELECT *
+		FROM OPENXML (@hdoc, '/root/ClasesdeArticulos/ClasesdeArticulo' , 1)
+		WITH(
+			Nombre nvarchar(50)
+		)
+
+
+
+		INSERT INTO @ArticuloTemp(
+			   [Nombre],
+			   [ClaseArticulo],
+			   [Precio])
+		SELECT *
+		FROM OPENXML (@hdoc, '/root/Articulos/Articulo' , 1)
+		WITH(
+			Nombre nvarchar(50),
+			ClasesdeArticulo nvarchar(50),
+			Precio money
+		)													/* Se inserta primero en una tabla temporal para asi luego poder insertar en una tabla permanente y realizar el mapeo*/
+
+		INSERT INTO [dbo].[Articulo]([Nombre],[idClaseArticulo],[Precio])
+		SELECT
+			A.Nombre,
+			CA.id as idClaseArticulo,
+			A.Precio
+		FROM
+			[dbo].[ClaseArticulo] CA INNER JOIN @ArticuloTemp A ON CA.Nombre = A.ClaseArticulo
+
+
+		DELETE FROM @ArticuloTemp
+
+	END
