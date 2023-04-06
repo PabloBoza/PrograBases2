@@ -3,7 +3,9 @@ GO
 
 CREATE PROCEDURE SP_Filtra_Nombre_Alfabeto (
 	@Nombre nvarchar(128),
-	@OutResultCode int
+	@OutResultCode int,
+	@inIDUser nvarchar(128),
+	@inIP nvarchar(128)
 	)
 	
 	AS
@@ -13,8 +15,23 @@ CREATE PROCEDURE SP_Filtra_Nombre_Alfabeto (
 
 		BEGIN TRY
 
+			DECLARE @LogDescription nvarchar(1000) = 'TipoAccion = <Consulta por nombre en tabla Articulo en orden alfabetico> Description=<Ascendente>'
+
 			SELECT * FROM [dbo].[Articulo] WHERE Nombre LIKE '%'+@Nombre+'%'
 			ORDER BY Nombre ASC
+
+			INSERT INTO [dbo].[EventLog] (
+				[logDescription],
+				[postIdUser],
+				[postUserIP],
+				[postTime]
+			)
+			VALUES (
+				@LogDescription,
+				@inIDUser,
+				@inIP,
+				GETDATE()
+			)
 
 		END TRY
 

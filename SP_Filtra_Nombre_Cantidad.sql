@@ -1,11 +1,12 @@
 USE TareaProgramada1
 GO
 
-CREATE PROCEDURE SP_Filtra_Nombre (
+CREATE PROCEDURE SP_Filtra_Nombre_Cantidad (
 	@Nombre nvarchar(128),
+	@Cantidad int,
 	@OutResultCode int,
-	@inIDUser nvarchar(128),
-	@inIP nvarchar(128)
+	@inUserId int,
+	@inIP varchar(50)
 	)
 	
 	AS
@@ -15,11 +16,13 @@ CREATE PROCEDURE SP_Filtra_Nombre (
 
 		BEGIN TRY
 
-			DECLARE @LogDescription nvarchar(1000) = 'TipoAccion = <Consulta por nombre en tabla Articulo> Description=<'+@Nombre+'>'
+			DECLARE @LogDescription VARCHAR(2000)='TipoAccion = <Consulta por cantidad en tabla Articulo> Description=<'+@Cantidad+'>'
 
-			SELECT * FROM [dbo].[Articulo] WHERE Nombre LIKE '%'+@Nombre+'%'
+			SELECT @Cantidad FROM [dbo].[Articulo] A INNER JOIN [dbo].[ClaseArticulo] CA ON A.idClaseArticulo = CA.id 
+			WHERE  A.Nombre LIKE '%'+@Nombre+'%'
+			ORDER BY A.Nombre ASC
 
-			INSERT INTO [dbo].[EventLog] (
+			INSERT INTO [dbo].[EventLog](
 				[logDescription],
 				[postIdUser],
 				[postUserIP],
@@ -27,7 +30,7 @@ CREATE PROCEDURE SP_Filtra_Nombre (
 			)
 			VALUES (
 				@LogDescription,
-				@inIDUser,
+				@inUserID,
 				@inIP,
 				GETDATE()
 			)
