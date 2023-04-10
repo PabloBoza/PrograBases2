@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="/css/styles.css">
+</head>
+
+<body style="background-color:#FFFFFF">
+	<div class="login-form">
+		<h1>Pagina principal</h1>
+  	<!-- Boton para filtrar por nombre -->
+        <button class="btn" onclick="filtrarNombre()" > Filtrar por Nombre</button>
+       	
+	<!-- Espacio de texto para filtrar por nombre -->
+	<input type="text" id="inNombre" placeholder="Filtrar por nombre">
+      
+	<!-- Boton de filtrar por cantidad -->
+	<button class="btn" onclick="filtrarCantidad()" > Filtrar por Cantidad</button>
+       	
+	<!-- Espacio de texto para ver cuantos se desea filtrar por cantidad -->
+	<input id="inCantidad" placeholder="Filtrar por Cantidad" type="number" step="1">
+       	
+	<!-- Boton de redireccion hacia /AgregarArticulo -->
+	<button class="btn"><a class="a2"href="/AgregarArticulo"> AgregarArticulo</a></button>
+       	
+	<!-- Declaracion y creacion de la tabla en HTML para la base de datos -->
+	<table id="Articulos">
+         <tr class="header">
+           <th style="width:85%;">Nombre</th>
+           <th style="width:15%;">Precio</th>
+	 </tr>
+         <%Articulos.recordset.forEach(function(Articulo, index){%>
+         <tr>
+           <td><%= Articulo.Nombre%></td>
+           <td><%= Articulo.Precio%></td>
+         </tr>
+         <%});%>
+       </table> 
+       
+
+
+
+       <script> 
+        function filtrarNombre() {
+          // Declare variables
+          var input, filter, table, tr, td, i, txtValue;
+          input = document.getElementById("inNombre");
+          filter = input.value.toUpperCase();
+          table = document.getElementById("Articulos");
+          tr = table.getElementsByTagName("tr");
+        
+          // Loop through all table rows, and hide those who don't match the search query
+          for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[0];
+            if (td) {
+              txtValue = td.textContent || td.innerText;
+              if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+              } else {
+                tr[i].style.display = "none";
+              }
+            }
+          }
+        }
+	function filtrarClaseArticulo() {
+          // Declare variables
+          var input, filter, table, tr, td, i, txtValue;
+          input = document.getElementById("inClaseArticulo");
+          filter = input.value.toUpperCase();
+          table = document.getElementById("Articulos");
+          tr = table.getElementsByTagName("tr");
+        
+          // Loop through all table rows, and hide those who don't match the search query
+          for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[1];
+            if (td) {
+              txtValue = td.textContent || td.innerText;
+              if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+              } else {
+                tr[i].style.display = "none";
+              }
+            }
+          }
+        }
+        function filtrarCantidad() {
+          // Declare variables
+          var input, input2, filter, table, tr, td, i, j, txtValue;
+          input = document.getElementById("inNombre");
+          input2 = document.getElementById("inCantidad");
+          filter = input.value.toUpperCase();
+          table = document.getElementById("Articulos");
+          tr = table.getElementsByTagName("tr");
+          j = 0
+          // Loop through all table rows, and hide those who don't match the search query
+          for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[0];
+            if (td) {
+              txtValue = td.textContent || td.innerText;
+              if (txtValue.toUpperCase().indexOf(filter) > -1 && j < parseInt(input2.value)) {
+                tr[i].style.display = "";
+                j=j+1;
+              } else {
+                tr[i].style.display = "none";
+              }
+            }
+          }
+        }
+        </script>
+</body>
+</html>
