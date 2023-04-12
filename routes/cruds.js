@@ -5,9 +5,10 @@ module.exports = {
         var Precio = req.body.password;
         var output = 0;
         let dbrequest = new sql.Request();
-        let dbquery = 'EXEC SP_Inserta_Articulo @Nombre, @Precio, @output out';
+        let dbquery = 'EXEC sp_AgregarArticulo @Nombre, @ClaseArticulo , @Precio, @output out';
         if (Nombre && Precio) {
             dbrequest.input('Nombre',sql.VarChar,Nombre);
+            dbrequest.input('ClaseArticulo',sql.VarChar,Nombre);
             dbrequest.input('Precio',sql.Money,Precio);
             dbrequest.output('output', sql.Int, output);
             dbrequest.query(dbquery, function(err, results, fields) {

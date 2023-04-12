@@ -20,7 +20,7 @@ module.exports = {
         var password = req.body.password;
         var output = 0;
         let dbrequest = new sql.Request();
-        let dbquery = 'EXEC sp_Login @Usuario, @Contrasenna, @output out';//Esto va a estar basicamente en un querry de SQL
+        let dbquery = 'EXEC SP_Login @Usuario, @Contrasenna, @output out';//Esto va a estar basicamente en un querry de SQL
         if (username && password) {
             //Dentro de la base de datos
             dbrequest.input('Usuario',sql.VarChar,username);//@Usuario
@@ -42,8 +42,21 @@ module.exports = {
             res.end();
         }
         },
-    getAgregarArticulo: (req,res)=>{
-        res.render('AgregarArticulo.ejs');
+    //getAgregarArticulo: (req,res)=>{
+    //    res.render('AgregarArticulo.ejs');
+    //}
+    getAgregarArticulo: (req, res)=>{
+        var output = 0;
+        let dbrequest = new sql.Request();
+        let dbquery = "EXEC dbo.sp_MostrarClaseArticulo @output out";
+        dbrequest.output('output',sql.Int, output);//@output
+        dbrequest.query(dbquery,function(err,rows,fields){
+            if (err) console.log(err)
+            else{
+                res.render('AgregarArticulo.ejs', {"ClaseArticulo": rows});
+            }
+        });
+
     }
     
     

@@ -7,10 +7,10 @@ var bodyParser = require('body-parser');//Biblioteca
 app.set('view engine', 'ejs');//Settear que el engine es ejs(React java Script)
 // Configuracion de la base de datos
 var config = {
-    user: "Guillermo",
-    password: "eAaY31xj3exhxT3zZpiz",
-    server: "tarea-corta-1.cf89yocbsjjy.us-east-1.rds.amazonaws.com", 
-    database: "Tarea_Corta_1",
+    user: "Pablo",
+    password: "12345Pablo",
+    server: "tarea-programada-1.cf89yocbsjjy.us-east-1.rds.amazonaws.com", 
+    database: "TareaProgramada1",
     port: 1433,//Puerto de MSQL
     trustServerCertificate: true
 };
