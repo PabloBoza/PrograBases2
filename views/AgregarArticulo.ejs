@@ -3,6 +3,19 @@
 <head>
 <link rel="stylesheet" type="text/css" href="/css/styles.css">
 </head>
+
+<body style="background-color:#FFFFFF">
+      <div class="login-form">
+	<h1>Agregar articulo</h1>
+        <form action="agregar" method="POST">
+            <input type="text" name="username" placeholder="Nombre del Articulo" required>
+            <input type="text" name="ClaseArticulo" placeholder="Nombre de Clase de articulo" required>
+            <input type="number" name="password" placeholder="Precio del articulo" required>
+            <input type="submit" id="loginbutton" value="Agregar">
+            <!-- Boton de redireccion hacia /AgregarArticulo -->
+    <button class="btn"><a class="a2"href="/main"> Salir</a></button>
+        </form>
+    </div>
 <table id="ClaseArticulo">
          <tr class="header">
            <th style="width:100%;">Seleccione el nombre de la Clase de articulo</th>
@@ -14,17 +27,6 @@
          </tr>
          <%});%>
        </table>
-<body style="background-color:#FFFFFF">
-      <div class="login-form">
-	<h1>Agregar articulo</h1>
-        <form action="agregar" method="POST">
-            <input type="text" name="username" placeholder="Nombre del Articulo" required>
-            <input type="text" name="ClaseArticulo" placeholder="Nombre del Articulo" required>
-            <input type="number" name="password" placeholder="Precio del articulo" required>
-            <input type="submit" id="loginbutton" value="Agregar">
-        </form>
-    </div>
-
 
 
 </body>

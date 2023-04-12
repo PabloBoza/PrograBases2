@@ -8,7 +8,7 @@ module.exports = {
         let dbquery = 'EXEC sp_AgregarArticulo @Nombre, @ClaseArticulo , @Precio, @output out';
         if (Nombre && Precio) {
             dbrequest.input('Nombre',sql.VarChar,Nombre);
-            dbrequest.input('ClaseArticulo',sql.VarChar,Nombre);
+            dbrequest.input('ClaseArticulo',sql.VarChar,ClaseArticulo);
             dbrequest.input('Precio',sql.Money,Precio);
             dbrequest.output('output', sql.Int, output);
             dbrequest.query(dbquery, function(err, results, fields) {
